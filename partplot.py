@@ -38,7 +38,7 @@ def labelPlot(xName, yName, labelName='Part #', **kwargs):
     yp = np.log10(ym) if yscale == "log" else ym
     cp = np.log10(cm) if cscale == "log" else cm
 
-    fig, ax = plt.subplots(figsize=(8, 5))
+    fig, ax = plt.subplots(figsize=(8, 4.5), dpi=128)
 
     sc = ax.scatter(xp, yp, c=cp, s=sm, cmap=cmap, alpha=0.7)
     sc.set_clim(np.min(cp), np.max(cp))
