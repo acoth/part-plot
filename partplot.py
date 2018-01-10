@@ -44,22 +44,18 @@ def labelPlot(xName, yName, labelName='Part #', **kwargs):
     sc.set_clim(np.min(cp), np.max(cp))
     cb = plt.colorbar(sc)
     if xscale == "log":
-        majorTicks = np.arange(np.floor(np.min(xp)), np.ceil(np.max(xp)) + 1)
-        minorTicks = np.concatenate([np.log10(range(1, 10 if x != majorTicks[-1] else 2)) + x for x in majorTicks])
-        ax.set_xticks(minorTicks)
-        ax.set_xticklabels([engLabel(x) if x in majorTicks else "" for x in minorTicks])
+        xMinorTicks, xMinorTickLabels = logTicks(np.min(xp), np.max(xp))
+        ax.set_xticks(xMinorTicks)
+        ax.set_xticklabels(xMinorTickLabels)
     if yscale == "log":
-        majorTicks = np.arange(np.floor(np.min(yp)), np.ceil(np.max(yp)) + 1)
-        minorTicks = np.concatenate([np.log10(range(1, 10 if x != majorTicks[-1] else 2)) + x for x in majorTicks])
-        ax.set_yticks(minorTicks)
-        ax.set_yticklabels([engLabel(x) if x in majorTicks else "" for x in minorTicks])
+        yMinorTicks, yMinorTickLabels = logTicks(np.min(yp), np.max(yp))
+        ax.set_yticks(yMinorTicks)
+        ax.set_yticklabels(yMinorTickLabels)
     if cscale == "log":
-        majorTicks = np.arange(np.floor(np.min(cp)), np.ceil(np.max(cp)) + 1)
-        minorTicks = np.concatenate([np.log10(range(1, 10 if x != majorTicks[-1] else 2)) + x for x in majorTicks])
-        print minorTicks
-        cb.set_ticks(minorTicks)
-        cb.set_ticklabels([engLabel(x) if x in majorTicks else "" for x in minorTicks])
-    sc.set_clim(np.min(minorTicks), np.max(minorTicks))
+        cMinorTicks, cMinorTickLabels = logTicks(np.min(cp), np.max(cp))
+        cb.set_ticks(cMinorTicks)
+        cb.set_ticklabels(cMinorTickLabels)
+        sc.set_clim(np.min(cMinorTicks), np.max(cMinorTicks))
     ax.grid(which="both")
     #    ax.set_xlabel(xName)
     #    ax.set_ylabel(yName)
@@ -67,6 +63,23 @@ def labelPlot(xName, yName, labelName='Part #', **kwargs):
     mpld3.plugins.connect(fig, tooltip)
     return mpld3.fig_to_html(fig, figid="figure")
 
+
+def logTicks(lower, upper):
+    lli = np.floor(lower)
+    llf = np.floor(np.power(10, lower - lli))
+    uli = np.floor(upper)
+    ulf = np.ceil(np.power(10, upper - uli))
+    if lli == uli:
+        ticks = lli + np.log10(np.arange(llf, ulf + 1))
+    else:
+        firstPart = lli + np.log10(np.arange(llf, 10))
+        middle = np.concatenate([np.log10(np.arange(1, 10)) + x for x in np.arange(lli + 1, uli)])
+        lastPart = uli + np.log10(np.arange(1, ulf + 1))
+        ticks = np.concatenate((firstPart, middle, lastPart))
+    labels = [engLabel(x) if x.is_integer() else "" for x in ticks]
+    labels[0] = engLabel(ticks[0])
+    labels[-1] = engLabel(ticks[-1])
+    return (ticks, labels)
 
 def engLabel(number):
     d = 3 * np.floor(number / 3)
