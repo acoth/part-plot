@@ -42,10 +42,46 @@ def labelPlot(xName, yName, labelName='Part #', **kwargs):
 
     sc = ax.scatter(xp, yp, c=cp, s=sm, cmap=cmap)
     sc.set_clim(np.min(cp), np.max(cp))
-    plt.colorbar(sc)
+    cb = plt.colorbar(sc)
+    if xscale == "log":
+        majorTicks = np.arange(np.floor(np.min(xp)), np.ceil(np.max(xp)) + 1)
+        minorTicks = np.concatenate([np.log10(range(1, 10 if x != majorTicks[-1] else 2)) + x for x in majorTicks])
+        ax.set_xticks(minorTicks)
+        ax.set_xticklabels([engLabel(x) if x in majorTicks else "" for x in minorTicks])
+    if yscale == "log":
+        majorTicks = np.arange(np.floor(np.min(yp)), np.ceil(np.max(yp)) + 1)
+        minorTicks = np.concatenate([np.log10(range(1, 10 if x != majorTicks[-1] else 2)) + x for x in majorTicks])
+        ax.set_yticks(minorTicks)
+        ax.set_yticklabels([engLabel(x) if x in majorTicks else "" for x in minorTicks])
+    if cscale == "log":
+        majorTicks = np.arange(np.floor(np.min(cp)), np.ceil(np.max(cp)) + 1)
+        minorTicks = np.concatenate([np.log10(range(1, 10 if x != majorTicks[-1] else 2)) + x for x in majorTicks])
+        print minorTicks
+        cb.set_ticks(minorTicks)
+        cb.set_ticklabels([engLabel(x) if x in majorTicks else "" for x in minorTicks])
+    sc.set_clim(np.min(minorTicks), np.max(minorTicks))
     ax.grid(which="both")
     #    ax.set_xlabel(xName)
     #    ax.set_ylabel(yName)
     tooltip = mpld3.plugins.PointLabelTooltip(sc, namesm.compressed())
     mpld3.plugins.connect(fig, tooltip)
     return mpld3.fig_to_html(fig, figid="figure")
+
+
+def engLabel(number):
+    d = 3 * np.floor(number / 3)
+    r = number - d
+    rstr = "%1.3g" % np.power(10, r)
+    unitTable = {0: "",
+                 3: "k",
+                 6: "M",
+                 9: "G",
+                 12: "T",
+                 15: "P",
+                 -3: "m",
+                 -6: "u",
+                 -9: "n",
+                 -12: "p",
+                 -15: "f",
+                 -18: "a"}
+    return rstr + unitTable.get(d, '?')
