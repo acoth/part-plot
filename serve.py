@@ -5,7 +5,7 @@ Created on Sun Dec 17 13:42:38 2017
 
 @author: acoth
 """
-
+import argparse
 from flask import Flask, request, render_template
 from numpy import Inf
 import partplot
@@ -13,6 +13,10 @@ import re
 
 app = Flask(__name__)
 
+parser = argparse.ArgumentParser()
+parser.add_argument('-p', '--port', type=int, help='port to run server on')
+args = parser.parse_args()
+port = args.port if args.port else 4858
 
 @app.route('/', methods=['GET', 'POST'])
 def page():
@@ -52,4 +56,4 @@ def page():
                             varnames=partplot.fieldnames, scaleTypes=('linear', 'log')))
 
 
-app.run(host='0.0.0.0', port=80)
+app.run(host='0.0.0.0', port=port)
