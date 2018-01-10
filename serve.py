@@ -52,4 +52,4 @@ def page():
                             varnames=partplot.fieldnames, scaleTypes=('linear', 'log')))
 
 
-app.run(host='0.0.0.0', port=4858)
+app.run(host='0.0.0.0', port=80)
