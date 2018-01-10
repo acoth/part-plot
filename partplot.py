@@ -40,7 +40,7 @@ def labelPlot(xName, yName, labelName='Part #', **kwargs):
 
     fig, ax = plt.subplots()
 
-    sc = ax.scatter(xp, yp, c=cp, s=sm, cmap=cmap)
+    sc = ax.scatter(xp, yp, c=cp, s=sm, cmap=cmap, alpha=0.7)
     sc.set_clim(np.min(cp), np.max(cp))
     cb = plt.colorbar(sc)
     if xscale == "log":
