@@ -16,6 +16,13 @@ def labelPlot(xName, yName, labelName='Part #', **kwargs):
     x = np.array(oap[xName])
     y = np.array(oap[yName])
     c = np.array(oap.get(kwargs.get('cName', None), np.zeros(np.shape(x))))
+    try:
+        d = c + 1
+    except:
+        d = list(set(c))
+        d.sort()
+        c = map(lambda x: d.index(x), c)
+        
     names = oap.get(labelName, 'Part #')
 
     xscale = kwargs.get('xscale', 'linear')
