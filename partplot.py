@@ -68,8 +68,9 @@ def labelPlot(xName, yName, labelName='Part #', **kwargs):
     #    ax.set_ylabel(yName)
     tooltip = mpld3.plugins.PointLabelTooltip(sc, namesm.compressed())
     mpld3.plugins.connect(fig, tooltip)
-    return mpld3.fig_to_html(fig, figid="figure")
-
+    ret = mpld3.fig_to_html(fig, figid="figure")
+    plt.close(fig)
+    return (ret)
 
 def logTicks(lower, upper):
     lli = np.floor(lower)
