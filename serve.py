@@ -56,4 +56,5 @@ def page():
                             varnames=partplot.fieldnames, scaleTypes=('linear', 'log')))
 
 
-app.run(host='0.0.0.0', port=port)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=port)
