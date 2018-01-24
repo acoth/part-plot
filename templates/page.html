@@ -6,8 +6,9 @@
 <title> Opamp Selector </title>
 <div class=page>
     {{plot|safe}}
-    <div style="text-align:center;">
-        <form method="post">
+    <form method="post">
+        <div style="text-align:center;">
+
             <div style="float:left;">
                 <div style="float:left; padding-right:10px;">
                     X:
@@ -59,19 +60,26 @@
                 <input type="text" name="cmax" value="{{curr_cmax}}" size="7">
             </div>
 
-    </div>
-</div>
+        </div>
 <div style="clear:both;">
-    Labels:
-    <select name="name">
+
+    <div style="float:left; padding-right:10px;">Labels: <select name="name">
         {%for v in varnames%}
         <option value="{{v}}" {%if v==curr_name%}selected{%endif%}>{{v}}</option>
         {%endfor%}
     </select>
+    </div>
+    {%for f in filter%}
+    <div>{{f}}:<br/>
+        {%for m in filter[f]%}
+        <input type="checkbox" id="{{f}}_{{m}}" name="{{f}}" value="{{m}}" {%if filter[f][m]%}checked{%endif%}><label
+                for="{{f}}_{{m}}">{{m}}</label>
+        {%endfor%}
+    </div>
+    {%endfor%}
     <div class="button">
         <button type="submit">Plot</button>
     </div>
 </div>
 </form>
-</div>
 </div>

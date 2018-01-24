@@ -7,7 +7,17 @@ with open('oap.json')as dataFile:
     oap = json.load(dataFile)
 
 fieldnames = oap.keys()
+filterableNames = ['Manufacturer']
+filterables = {f: list(sorted(set(oap[f]))) for f in filterableNames}
 
+
+def filterMask(filt):
+    mask = np.array([False] * np.shape(oap[fieldnames[0]])[0])
+    for fel in filt:
+        print filt[fel]
+        mask = mask | [not filt[fel][m] for m in oap[fel]]
+        print mask
+    return mask
 
 def labelPlot(xName, yName, labelName='Part #', **kwargs):
     plt.ioff()
@@ -33,7 +43,8 @@ def labelPlot(xName, yName, labelName='Part #', **kwargs):
     ylim = kwargs.get('ylim', (0, np.Inf) if yscale == 'log' else (-np.Inf, np.Inf))
     clim = kwargs.get('clim', (0, np.Inf) if cscale == 'log' else (-np.Inf, np.Inf))
 
-    mask = np.array(kwargs.get('mask', np.array([False] * np.shape(x)[0]))) | (x <= xlim[0]) | (x > xlim[1]) | (
+    mask = np.array(kwargs.get('mask', np.array([False] * np.shape(x)[0]))) | filterMask(kwargs['filter']) | (
+            x <= xlim[0]) | (x > xlim[1]) | (
             y <= ylim[0]) | (y > ylim[1]) | (c <= clim[0]) | (c > clim[1])
     xm = np.ma.masked_array(x, mask)
     ym = np.ma.masked_array(y, mask)

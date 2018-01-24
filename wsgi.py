@@ -31,7 +31,8 @@ def page():
                   'clim': (1e-10, 1e-7),
                   'xscale': 'log',
                   'yscale': 'log',
-                  'cscale': 'log'}
+                  'cscale': 'log',
+                  'filter': {'Manufacturer': {'L-ADI': True, 'L-LTC': True, 'TI': False}}}
     if request.method == 'POST':
         params = {'xName': request.form['xvar'].encode('utf8'),
                   'yName': request.form['yvar'].encode('utf8'),
@@ -43,8 +44,9 @@ def page():
                   'xscale': request.form['xscale'].encode('utf8'),
                   'yscale': request.form['yscale'].encode('utf8'),
                   'cscale': request.form['cscale'].encode('utf8'),
+                  'filter': {f: {m: m in request.form.getlist(f) for m in partplot.filterables[f]} for f in
+                             partplot.filterables}
                   }
-    #    print params
     return (render_template('page.html',
                             plot=partplot.labelPlot(**params),
                             curr_x=params['xName'], curr_y=params['yName'], curr_c=params['cName'],
@@ -53,7 +55,8 @@ def page():
                             curr_xmin='%1.2g' % params['xlim'][0], curr_xmax='%1.2g' % params['xlim'][1],
                             curr_ymin='%1.2g' % params['ylim'][0], curr_ymax='%1.2g' % params['ylim'][1],
                             curr_cmin='%1.2g' % params['clim'][0], curr_cmax='%1.2g' % params['clim'][1],
-                            varnames=partplot.fieldnames, scaleTypes=('linear', 'log')))
+                            varnames=partplot.fieldnames, scaleTypes=('linear', 'log'),
+                            filter=params['filter']))
 
 
 if __name__ == '__main__':
