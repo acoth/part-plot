@@ -79,8 +79,12 @@ def labelPlot(xName, yName, labelName='Part #', **kwargs):
         cb.set_ticklabels(cMinorTickLabels)
         sc.set_clim(np.min(cMinorTicks), np.max(cMinorTicks))
     ax.grid(which="both")
-    tooltip = mpld3.plugins.PointLabelTooltip(sc, namesm.compressed().ravel().tolist())
+
+    tooltipLabels = ['<span>{label}</span>'.format(label=l) for l in namesm.compressed().ravel().tolist()]
+    css = "span {background-color: white; font-weight: bold;}"
+    tooltip = mpld3.plugins.PointHTMLTooltip(sc, tooltipLabels, css=css)
     mpld3.plugins.connect(fig, tooltip)
+
     ret = mpld3.fig_to_html(fig, figid="figure")
     plt.close(fig)
     return ret
