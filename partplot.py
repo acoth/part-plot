@@ -1,3 +1,6 @@
+import matplotlib
+matplotlib.use('agg')
+
 import numpy as np
 import matplotlib.pyplot as plt
 import mpld3
@@ -19,10 +22,11 @@ def filterMask(filt):
         print mask
     return mask
 
+
 def labelPlot(xName, yName, labelName='Part #', **kwargs):
     plt.ioff()
 
-    cmap = plt.cm.plasma
+    cmap = plt.winter()
     x = np.array(oap[xName])
     y = np.array(oap[yName])
     c = np.array(oap.get(kwargs.get('cName', None), np.zeros(np.shape(x))))
@@ -31,7 +35,7 @@ def labelPlot(xName, yName, labelName='Part #', **kwargs):
     except:
         d = list(set(c))
         d.sort()
-        c = np.array(map(lambda x: d.index(x), c)) + 1
+        c = np.array(map(lambda a: d.index(a), c)) + 1
 
     names = oap.get(labelName, 'Part #')
 
@@ -45,7 +49,7 @@ def labelPlot(xName, yName, labelName='Part #', **kwargs):
 
     mask = np.array(kwargs.get('mask', np.array([False] * np.shape(x)[0]))) | filterMask(kwargs['filter']) | (
             x <= xlim[0]) | (x > xlim[1]) | (
-            y <= ylim[0]) | (y > ylim[1]) | (c <= clim[0]) | (c > clim[1])
+                   y <= ylim[0]) | (y > ylim[1]) | (c <= clim[0]) | (c > clim[1])
     xm = np.ma.masked_array(x, mask)
     ym = np.ma.masked_array(y, mask)
     cm = np.ma.masked_array(c, mask)
@@ -75,13 +79,12 @@ def labelPlot(xName, yName, labelName='Part #', **kwargs):
         cb.set_ticklabels(cMinorTickLabels)
         sc.set_clim(np.min(cMinorTicks), np.max(cMinorTicks))
     ax.grid(which="both")
-    #    ax.set_xlabel(xName)
-    #    ax.set_ylabel(yName)
-    tooltip = mpld3.plugins.PointLabelTooltip(sc, namesm.compressed())
+    tooltip = mpld3.plugins.PointLabelTooltip(sc, namesm.compressed().ravel().tolist())
     mpld3.plugins.connect(fig, tooltip)
     ret = mpld3.fig_to_html(fig, figid="figure")
     plt.close(fig)
-    return (ret)
+    return ret
+
 
 def logTicks(lower, upper):
     lli = np.floor(lower)
@@ -98,7 +101,8 @@ def logTicks(lower, upper):
     labels = [engLabel(x) if x.is_integer() else "" for x in ticks]
     labels[0] = engLabel(ticks[0])
     labels[-1] = engLabel(ticks[-1])
-    return (ticks, labels)
+    return ticks, labels
+
 
 def engLabel(number):
     d = 3 * np.floor(number / 3)
